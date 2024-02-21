@@ -13,7 +13,7 @@ namespace Physics_Engine.MainApp.Main
         [STAThread]
         public static void Main()
         {
-            for (int i = 0; i < 500; i++)
+            for (int i = 0; i < 10; i++)
             {
                 list.AddParticle(10, (decimal)10e4,
                     MathFunctions.GetRandomNumber(0, GraphicConfigs.WindowWidth),

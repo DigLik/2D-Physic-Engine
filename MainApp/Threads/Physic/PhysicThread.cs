@@ -1,4 +1,5 @@
-﻿using Physics_Engine.MainApp.Main;
+﻿using Physics_Engine.MainApp.Graphics;
+using Physics_Engine.MainApp.Main;
 using System.Windows.Threading;
 
 namespace Physics_Engine.MainApp.Threads.Physic
@@ -13,7 +14,13 @@ namespace Physics_Engine.MainApp.Threads.Physic
             {
                 for (int i = 0; i < Startup.list.Count(); i++)
                 {
-                    Startup.list.particles[i].x += 1;
+                    if (Startup.list.particles[i].x > GraphicConfigs.WindowWidth + Startup.list.particles[i].radius)
+                    {
+                        Startup.list.particles[i].x = 0 - Startup.list.particles[i].radius;
+                    } else
+                    {
+                        Startup.list.particles[i].x += 5;
+                    }
                 }
             };
             Ftimer.Start();

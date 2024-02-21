@@ -9,6 +9,6 @@ namespace Physics_Engine.MainApp.Graphics
         public static int WindowHeight = 400;
         public static bool WindowResizable = false;
         public static Color color = Colors.Black;
-        public static int FPS = 60;
+        public static int FPS = 165;
     }
 }
