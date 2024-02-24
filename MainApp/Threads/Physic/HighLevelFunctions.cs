@@ -1,10 +1,4 @@
 ﻿using Physics_Engine.MainApp.Objects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Documents;
 
 namespace Physics_Engine.MainApp.Threads.Physic
 {
@@ -30,7 +24,13 @@ namespace Physics_Engine.MainApp.Threads.Physic
 
         public static decimal GravityForce(Particle p1, Particle p2)
         {
-            return PhysicConfigs.G * p1.mass * p2.mass / (decimal)Math.Pow((double)Hypotenuse(p1, p2), 2);
+            return PhysicConfigs.G * (p1.mass * p2.mass / (decimal)Math.Pow((double)Hypotenuse(p1, p2), 2));
+        }
+
+        public static void СollisionСalculation(Particle p1, Particle p2)
+        {   
+            decimal vX1 = p1.vX, vY1 = p1.vY;
+            decimal vX2 = p2.vX, vY2 = p2.vY;
         }
     }
 }

@@ -6,7 +6,6 @@
     <RootNamespace>Physics_Engine</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
     <UseWPF>True</UseWPF>
     <StartupObject>Physics_Engine.MainApp.Main.Startup</StartupObject>
   </PropertyGroup>

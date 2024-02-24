@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Physics_Engine.MainApp.Threads.Physic
+﻿namespace Physics_Engine.MainApp.Threads.Physic
 {
     public class PhysicConfigs
     {
-        public static int TPS = 1;
+        public static int TPS = 1000 / 1000;
+        public static decimal e = (decimal)1;
+        public static int DeltaTime = (int)(1000 / TPS * 10e0);
         public static decimal G = (decimal)6.67430e-11;
     }
 }

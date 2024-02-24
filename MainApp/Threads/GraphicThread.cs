@@ -1,6 +1,5 @@
 ﻿using Physics_Engine.MainApp.Graphics;
 using Physics_Engine.MainApp.Main;
-using Physics_Engine.MainApp.Objects;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -10,7 +9,12 @@ namespace Physics_Engine.MainApp.Threads
 {
     public class GraphicThread
     {
-        public static ParticleList list = new();
+        public static Canvas canvas = new()
+        {
+            Background = Brushes.Black,
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            VerticalAlignment = VerticalAlignment.Stretch
+        };
 
         public static void Start()
         {
@@ -18,12 +22,6 @@ namespace Physics_Engine.MainApp.Threads
             app.ShutdownMode = ShutdownMode.OnMainWindowClose;
             CreateWindow mainWindow = new();
 
-            Canvas canvas = new()
-            {
-                Width = GraphicConfigs.WindowWidth,
-                Height = GraphicConfigs.WindowHeight,
-                Background = Brushes.Black
-            };
 
             mainWindow.Content = canvas;
 
