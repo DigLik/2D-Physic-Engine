@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# CS0219: Переменная назначена, но ее значение не используется
+dotnet_diagnostic.CS0219.severity = silent

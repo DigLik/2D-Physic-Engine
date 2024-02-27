@@ -4,7 +4,7 @@
     {
         public static int TPS = 1000 / 1000;
         public static decimal e = (decimal)1;
-        public static int DeltaTime = (int)(1000 / TPS * 10e0);
+        public static int DeltaTime = (int)(10e6);
         public static decimal G = (decimal)6.67430e-11;
     }
 }
