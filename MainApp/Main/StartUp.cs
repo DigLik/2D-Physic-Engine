@@ -3,7 +3,7 @@ using Physics_Engine.MainApp.Graphics;
 using Physics_Engine.MainApp.Objects;
 using Physics_Engine.MainApp.Threads;
 using Physics_Engine.MainApp.Threads.Physic;
-
+using System.Windows.Media;
 using static Physics_Engine.MainApp.Objects.DefaultConfigs;
 
 namespace Physics_Engine.MainApp.Main
@@ -21,6 +21,8 @@ namespace Physics_Engine.MainApp.Main
                     MathFunctions.GetRandomNumber((int)(0 + DefaultConfigs.radius), (int)(GraphicConfigs.WindowHeight - DefaultConfigs.radius)),
                     vX, vY, color);
             }
+            //list.AddParticle(radius, mass, 100, 100, 0, 0, Colors.Blue);
+            //list.AddParticle(radius, mass, 200, 100, 0, 0, Colors.Red);
             PhysicThread.Start();
             GraphicThread.Start();
         }

@@ -1,7 +1,5 @@
 ﻿using System.Windows.Threading;
-using static Physics_Engine.MainApp.Functions.Physics.PhysicsFunctions;
 using static Physics_Engine.MainApp.Main.Startup;
-using static Physics_Engine.MainApp.Threads.GraphicThread;
 using static Physics_Engine.MainApp.Threads.Physic.HLFunc;
 using static Physics_Engine.MainApp.Threads.Physic.PhysicConfigs;
 
@@ -11,122 +9,89 @@ namespace Physics_Engine.MainApp.Threads.Physic
     {
         public static void Start()
         {
-            DispatcherTimer Ftimer = new();
-            Ftimer.Interval = TimeSpan.FromMilliseconds(TPS);
+            DispatcherTimer Ftimer = new()
+            {
+                Interval = TimeSpan.FromMilliseconds(TPS)
+            };
             Ftimer.Tick += (sender, args) =>
             {
-                for (int q = 0; q < list.Count(); q++)
+                for (int i = 0; i < list.Count(); i++)
                 {
-                    for (int w = q; w < list.Count(); w++)
+                    for (int j = i + 1; j < list.Count(); j++)
                     {
-                        int i = q;
-                        int j = w;
-                        if (j < i)
+                        if (Hypotenuse(list.particles[i], list.particles[j]) <= list.Radius(i) + list.Radius(j))
                         {
-                            continue;
-                        }
-                        if (i != j)
-                        {
-                            if (Hypotenuse(list.particles[i], list.particles[j]) > list.Radius(i) + list.Radius(j))
+                            decimal difference = list.Radius(i) + list.Radius(j) - Hypotenuse(list.particles[i], list.particles[j]);
+                            decimal angle = Angle(list.particles[j], list.particles[i]);
+                            list.X(i, list.X(i) + difference / 2 * (decimal)Math.Cos((double)angle));
+                            list.Y(i, list.Y(i) + difference / 2 * (decimal)Math.Sin((double)angle));
+                            list.X(j, list.X(j) - difference / 2 * (decimal)Math.Cos((double)angle));
+                            list.Y(j, list.Y(j) - difference / 2 * (decimal)Math.Sin((double)angle));
+
+                            decimal dx = list.particles[j].x - list.particles[i].x;
+                            decimal dy = list.particles[j].y - list.particles[i].y;
+
+                            decimal distance = (decimal)Math.Sqrt((double)(dx * dx + dy * dy));
+
+                            decimal nx = dx / distance;
+                            decimal ny = dy / distance;
+
+                            decimal dvx = list.particles[j].vX - list.particles[i].vX;
+                            decimal dvy = list.particles[j].vY - list.particles[i].vY;
+
+                            decimal VAN = dvx * nx + dvy * ny;
+
+                            if (VAN <= 0)
                             {
-                                decimal force = GravityForce(list.particles[j], list.particles[i]) * DeltaTime;
-                                decimal angle = Angle(list.particles[j], list.particles[i]);
-                                decimal vx = force * (decimal)Math.Cos((double)angle) / list.particles[i].mass;
-                                decimal vy = force * (decimal)Math.Sin((double)angle) / list.particles[i].mass;
+                                decimal e = (decimal)0.9;
+                                decimal impulse = (-2 * VAN) / (list.particles[i].mass + list.particles[j].mass);
+                                impulse *= e;
 
-                                list.VX(i, list.VX(i) + vx);
-                                list.VY(i, list.VY(i) + vy);
-                                list.X(i, list.X(i) - list.VX(i));
-                                list.Y(i, list.Y(i) - list.VY(i));
-                            }
-                            else
-                            {
-                                decimal difference = list.Radius(i) + list.Radius(j) - Hypotenuse(list.particles[i], list.particles[j]);
-                                decimal angle = Angle(list.particles[j], list.particles[i]);
-                                list.X(i, list.X(i) + difference * (decimal)Math.Cos((double)angle));
-                                list.Y(i, list.Y(i) + difference * (decimal)Math.Sin((double)angle));
-
-                                /*list.VX(i, СollisionСalculation(list.Mass(i), list.Mass(j), list.VX(i), list.VX(j), e));
-                                list.VY(i, СollisionСalculation(list.Mass(i), list.Mass(j), list.VY(i), list.VY(j), e));
-                                list.VX(j, СollisionСalculation(list.Mass(j), list.Mass(i), list.VX(j), list.VX(i), e));
-                                list.VY(j, СollisionСalculation(list.Mass(j), list.Mass(i), list.VY(j), list.VY(i), e));*/
-
-                                decimal dx = list.X(j) - list.X(i);
-                                decimal dy = list.Y(j) - list.Y(i);
-
-                                decimal distance = (decimal)Math.Sqrt((double)(dx * dx + dy * dy));
-
-                                decimal nx = dx / distance;
-                                decimal ny = dy / distance;
-
-                                decimal dvx = list.VX(j) - list.VX(i);
-                                decimal dvy = list.VY(j) - list.VY(i);
-
-                                decimal VAN = dvx * nx + dvy * ny;
-
-                                if (VAN <= 0)
-                                {
-                                    decimal impulse = (-2 * VAN) / (list.particles[i].mass + list.particles[j].mass);
-
-                                    list.VX(i, list.VX(i) - impulse * nx * list.particles[j].mass);
-                                    list.VY(i, list.VY(i) - impulse * ny * list.particles[j].mass);
-                                    list.VX(j, list.VX(j) + impulse * nx * list.particles[i].mass);
-                                    list.VY(j, list.VY(j) + impulse * ny * list.particles[i].mass);
-                                }
-
-                                list.X(i, list.X(i) - list.VX(i));
-                                list.Y(i, list.Y(i) - list.VY(i));
-                                list.X(j, list.X(j) - list.VX(j));
-                                list.Y(j, list.Y(j) - list.VY(j));
-
-                                /*
-                                double dx = object2.x - object1.x;
-                                double dy = object2.y - object1.y;
-
-                                double distance = Math.Sqrt(dx * dx + dy * dy);
-
-                                double nx = dx / distance;
-                                double ny = dy / distance;
-
-                                double dvx = object2.vx - object1.vx;
-                                double dvy = object2.vy - object1.vy;
-
-                                double VAN = dvx * nx + dvy * ny;
-
-                                if (VAN <= 0)
-                                {
-                                    double impulse = (-2 * VAN) / (object1.m + object2.m);
-
-                                    impulse *= 1;
-
-                                    object1.vx -= impulse * nx * object2.m;
-                                    object1.vy -= impulse * ny * object2.m;
-                                    object2.vx += impulse * nx * object1.m;
-                                    object2.vy += impulse * ny * object1.m;
-                                */
+                                list.particles[i].vX -= impulse * list.particles[j].mass * nx;
+                                list.particles[i].vY -= impulse * list.particles[j].mass * ny;
+                                list.particles[j].vX += impulse * list.particles[i].mass * nx;
+                                list.particles[j].vY += impulse * list.particles[i].mass * ny;
                             }
                         }
+                        else
+                        {
+                            decimal force = GravityForce(list.particles[i], list.particles[j]);
+                            decimal distance = Hypotenuse(list.particles[i], list.particles[j]);
+                            decimal angle = Angle(list.particles[i], list.particles[j]);
 
-                        if (list.X(i) < 0 + list.Radius(i))
-                        {
-                            list.X(i, list.Radius(i));
-                            list.VX(i, -list.VX(i));
+                            list.particles[i].vX += (force / list.particles[i].mass) * (decimal)Math.Cos((double)angle) * DeltaTime;
+                            list.particles[i].vY += (force / list.particles[i].mass) * (decimal)Math.Sin((double)angle) * DeltaTime;
+                            list.particles[j].vX -= (force / list.particles[j].mass) * (decimal)Math.Cos((double)angle) * DeltaTime;
+                            list.particles[j].vY -= (force / list.particles[j].mass) * (decimal)Math.Sin((double)angle) * DeltaTime;
                         }
-                        if (list.X(i) > (decimal)canvas.ActualWidth - list.Radius(i))
-                        {
-                            list.X(i, (decimal)canvas.ActualWidth - list.Radius(i));
-                            list.VX(i, -list.VX(i));
-                        }
-                        if (list.Y(i) < 0 + list.Radius(i))
-                        {
-                            list.Y(i, list.Radius(i));
-                            list.VY(i, -list.VY(i));
-                        }
-                        if (list.Y(i) > (decimal)canvas.ActualHeight - list.Radius(i))
-                        {
-                            list.Y(i, (decimal)canvas.ActualHeight - list.Radius(i));
-                            list.VY(i, -list.VY(i));
-                        }
+
+                        list.particles[i].x += list.particles[i].vX * DeltaTime;
+                        list.particles[i].y += list.particles[i].vY * DeltaTime;
+                        list.particles[j].x += list.particles[j].vX * DeltaTime;
+                        list.particles[j].y += list.particles[j].vY * DeltaTime;
+                    }
+                }
+                for (int i = 0; i < list.Count(); i++)
+                {
+                    if (list.X(i) < list.Radius(i))
+                    {
+                        list.X(i, list.Radius(i));
+                        list.VX(i, -list.VX(i));
+                    }
+                    if (list.X(i) > (decimal)GraphicThread.canvas.ActualWidth - list.Radius(i))
+                    {
+                        list.X(i, (decimal)GraphicThread.canvas.ActualWidth - list.Radius(i));
+                        list.VX(i, -list.VX(i));
+                    }
+                    if (list.Y(i) < list.Radius(i))
+                    {
+                        list.Y(i, list.Radius(i));
+                        list.VY(i, -list.VY(i));
+                    }
+                    if (list.Y(i) > (decimal)GraphicThread.canvas.ActualHeight - list.Radius(i))
+                    {
+                        list.Y(i, (decimal)GraphicThread.canvas.ActualHeight - list.Radius(i));
+                        list.VY(i, -list.VY(i));
                     }
                 }
             };
